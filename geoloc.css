@@ -48,8 +48,7 @@ nav {
 
 main {
   padding-top: 15px;
-  padding-bottom: 15px;
-  font-size: 1.3rem;  
+  padding-bottom: 15px;  
 }	
 
 footer {
@@ -59,16 +58,21 @@ footer {
 }
 
 #obtener, #borrabd {
-  height:70px;
-  width:150px;
+  height:80px;
+  width:170px;
   background-color:rgba(100,50,200,0.1);
   font-size: 1.5rem;
-  margin-left: 15px;  
+  margin-left: 25px;  
 }
 
 .loc {
   padding: 10px;
   background-color: #F0E68C;
   margin-top: 15px;
+  font-size: 1.3rem;
 	
 }
+
+.loc input {
+  width: 80%;		
+}	
