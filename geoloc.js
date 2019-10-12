@@ -119,14 +119,14 @@ function pintaloc(){
 	var sel = document.getElementById("ubicacion");
 	var datos='';
 	datos=' <div class="loc"> ';
-	datos+='<p> Punto: '+loc.punto;
-	datos+=' Latitud: '+loc.lat;
-	datos+=' Latongitud: '+loc.lon;
-	datos+=' Fecha: '+loc.fecha+'</p>';
+	datos+='<p> Punto: ' + loc.punto + '</p>';
+	datos+='<p> Latitud: '+loc.lat + '</p>';
+	datos+='<p> Latongitud: '+loc.lon + '</p>';
+	datos+='<p> Fecha: '+loc.fecha+'</p>';
 	datos+='<p> Comentario: <input type="text" name="coment" onchange="cambiacoment('+
 	       loc.punto+', value)" value="'+loc.coment+'" > </p>';
 	datos+='</div>';
-	sel.innerHTML+=datos;
+	sel.innerHTML=datos+sel.innerHTML;
 	
 	datos=" Punto: "+loc.punto+" Latidtud: "+loc.lat+" Longitud: "+loc.lon+" Hora: "+loc.fecha;
 	pie.innerHTML=datos;		
