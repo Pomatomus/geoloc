@@ -57,7 +57,7 @@ footer {
     padding:10px;	
 }
 
-#obtener, #borrabd {
+nav button { /* {  #obtener, #borrabd */
   height:80px;
   width:170px;
   background-color:rgba(100,50,200,0.1);
@@ -69,8 +69,7 @@ footer {
   padding: 10px;
   background-color: #F0E68C;
   margin-top: 15px;
-  font-size: 1.3rem;
-	
+  font-size: 1.3rem;	
 }
 
 .loc input {

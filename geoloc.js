@@ -13,6 +13,7 @@ var loc = {punto:0, lat:"", lon:"", fecha:"", coment:""};
 function iniciar(){
 	document.getElementById('obtener').addEventListener('click', obtener, false);
 	document.getElementById('borrabd').addEventListener('click', borrarbd, false);
+	document.getElementById('copiar').addEventListener('click', copiaAlPorta, false);
 	openDb();
 } 
 
@@ -122,7 +123,7 @@ function pintaloc(){
 	datos+='<p> Punto: ' + loc.punto + '</p>';
 	datos+='<p> Latitud: '+loc.lat + '</p>';
 	datos+='<p> Latongitud: '+loc.lon + '</p>';
-	datos+='<p> Fecha: '+loc.fecha+'</p>';
+	datos+='<p> Fecha: '+loc.fecha + '</p>';
 	datos+='<p> Comentario: <input type="text" name="coment" onchange="cambiacoment('+
 	       loc.punto+', value)" value="'+loc.coment+'" > </p>';
 	datos+='</div>';
@@ -132,7 +133,26 @@ function pintaloc(){
 	pie.innerHTML=datos;		
 }
 
+// copiar al porta papeles, usamos el foter.
 
+function copiaAlPorta() {
+  var valor = Number(prompt("Copiar Punto?", ""));
+  //if( valor !== 0 ) {
+    var aux = document.createElement("input");
+    var objectStore = db.transaction([DB_STORE_NAME], "readonly").objectStore(DB_STORE_NAME);
+    var request = objectStore.get(valor);	
+    request.onsuccess = function(event) {
+      var data = event.target.result;
+      aux.setAttribute("value", data.lat + "," + data.lon);
+    }
+    document.body.appendChild(aux);
+    aux.select();
+    document.execCommand("copy");
+    document.body.removeChild(aux);
+  //}
+}
+
+// manejar errores
 function errores(error){
   var pie=document.getElementById('pie');	
   pie.innerHTML='Error: '+error.code+' '+error.message;
