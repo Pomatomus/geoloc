@@ -136,20 +136,13 @@ function pintaloc(){
 // copiar al porta papeles, usamos el foter.
 
 function copiaAlPorta() {
-  var valor = Number(prompt("Copiar Punto?", ""));
-  //if( valor !== 0 ) {
-    var aux = document.createElement("input");
-    var objectStore = db.transaction([DB_STORE_NAME], "readonly").objectStore(DB_STORE_NAME);
-    var request = objectStore.get(valor);	
-    request.onsuccess = function(event) {
-      var data = event.target.result;
-      aux.setAttribute("value", data.lat + "," + data.lon);
-    }
-    document.body.appendChild(aux);
-    aux.select();
-    document.execCommand("copy");
-    document.body.removeChild(aux);
-  //}
+     var objectStore = db.transaction([DB_STORE_NAME], "readonly").objectStore(DB_STORE_NAME);
+	 var valor = Number(prompt("Copiar Punto?", ""));
+     var request = objectStore.get(valor);	
+     request.onsuccess = function(event) {
+	   var data = event.target.result;
+	   navigator.clipboard.writeText(data.lat + "," + data.lon);
+     }	
 }
 
 // manejar errores
