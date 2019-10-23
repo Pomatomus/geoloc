@@ -7,7 +7,7 @@ const DB_VERSION = 1; // Use a long long for this value (don't use a float)
 const DB_STORE_NAME = 'puntos';
 var db;
 var current_view_pub_key;
-var loc = {punto:0, lat:"", lon:"", fecha:"", coment:""};
+var loc = {punto:0, lat:"", lon:"", exact:"", altura:"", alterr:"", fecha:"", coment:""};
 
 // Inicio
 function iniciar(){
@@ -39,7 +39,8 @@ function openDb() {
 function agregarobjeto(){
   var transaction = db.transaction([DB_STORE_NAME], "readwrite");
   var objectStore = transaction.objectStore(DB_STORE_NAME);
-  var request = objectStore.add({id: loc.punto, lat: loc.lat, lon: loc.lon, fecha: loc.fecha, coment: loc.coment}); 
+  var request = objectStore.add({id: loc.punto, lat: loc.lat, lon: loc.lon, exact: loc.exact, 
+                altura: loc.altura, alterr: loc.alterr, fecha: loc.fecha, coment: loc.coment}); 
   // request.onsuccess = function(event) {
     // console.log('Objeto anadido');
   // }
@@ -56,6 +57,9 @@ function mostrarbd(){
       loc.punto=cursor.value.id;
 	  loc.lat=cursor.value.lat;
 	  loc.lon=cursor.value.lon;
+	  loc.exact=cursor.value.exact;
+	  loc.altura=cursor.value.altura;
+	  loc.alterr=cursor.value.alterr;
 	  loc.fecha=cursor.value.fecha;
 	  loc.coment=cursor.value.coment;
 	  punto+=1;
@@ -96,6 +100,7 @@ function cambiacoment(punto,texto){
 }
 // Obterner Posición
 function obtener(){
+  const prc = 1000000;
   var d = new Date();
   var geoconfig={
 		enableHighAccuracy: true,
@@ -106,9 +111,12 @@ function obtener(){
   navigator.geolocation.getCurrentPosition(function(position) {
 	punto+=1;
 	loc.punto=punto;
-	loc.lat= Math.round(position.coords.latitude*100000)/100000;
-	loc.lon= Math.round(position.coords.longitude*100000)/100000;
-	loc.fecha=  d.getDate()+"/"+d.getMonth()+"/"+d.getFullYear()+"  "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+	loc.lat= Math.round(position.coords.latitude*prc)/prc;
+	loc.lon= Math.round(position.coords.longitude*prc)/prc;
+	loc.exact= position.coords.accuracy;
+	loc.altura= position.coords.altitude;
+	loc.alterr= position.coords.altitudeAccuracy;
+	loc.fecha=  d.getDate()+"/"+d.getMonth()+"/"+d.getFullYear()+"  "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();	
 	loc.coment="";
 	pintaloc();
 	agregarobjeto();
@@ -120,12 +128,31 @@ function pintaloc(){
 	var sel = document.getElementById("ubicacion");
 	var datos='';
 	datos=' <div class="loc"> ';
-	datos+='<p> Punto: ' + loc.punto + '</p>';
-	datos+='<p> Latitud: '+loc.lat + '</p>';
-	datos+='<p> Latongitud: '+loc.lon + '</p>';
-	datos+='<p> Fecha: '+loc.fecha + '</p>';
-	datos+='<p> Comentario: <input type="text" name="coment" onchange="cambiacoment('+
-	       loc.punto+', value)" value="'+loc.coment+'" > </p>';
+	//Columna Texto
+	datos+=' <div class="loctext"> ';
+	datos+='<p> Punto: </p>';
+	datos+='<p> Latitud: </p>';
+	datos+='<p> Latongitud: </p>';
+	datos+='<p> Tolerancia: </p>';
+	datos+='<p> Altura: </p>';
+	datos+='<p> Error Altura: </p>';
+	datos+='<p> Fecha: </p>';
+	datos+='<p> Comentario: </p>';		   
+	datos+='</div>';
+    
+	//Columna Datos.
+    datos+=' <div class="locdat"> ';
+	datos+='<p> ' + loc.punto + '</p>';
+	datos+='<p> '+loc.lat + '</p>';
+	datos+='<p> '+loc.lon + '</p>';
+	datos+='<p> '+loc.exact + '</p>';
+	datos+='<p> '+loc.altura + '</p>';
+	datos+='<p> '+loc.alterr + '</p>';
+	datos+='<p> '+loc.fecha + '</p>';
+	datos+='<p> <input type="text" name="coment" onchange="cambiacoment('+
+	       loc.punto+', value)" value="'+loc.coment+'" > </p>';		   
+	datos+='</div>';   	
+	
 	datos+='</div>';
 	sel.innerHTML=datos+sel.innerHTML;
 	
@@ -133,16 +160,30 @@ function pintaloc(){
 	pie.innerHTML=datos;		
 }
 
-// copiar al porta papeles, usamos el foter.
+// copiar al porta papeles.
 
 function copiaAlPorta() {
+	 var data="";
      var objectStore = db.transaction([DB_STORE_NAME], "readonly").objectStore(DB_STORE_NAME);
 	 var valor = Number(prompt("Copiar Punto?", ""));
-     var request = objectStore.get(valor);	
-     request.onsuccess = function(event) {
-	   var data = event.target.result;
-	   navigator.clipboard.writeText(data.lat + "," + data.lon);
-     }	
+	 if (valor =="0") {		 
+       objectStore.openCursor().onsuccess = function(event) {
+         var cursor = event.target.result;
+         if (cursor) {
+           data+="Punto "+cursor.value.id+", ";
+	       data+=cursor.value.lat+",";
+           data+=cursor.value.lon+"\r";
+           cursor.continue();
+         }
+		 navigator.clipboard.writeText(data);
+	   }
+     } else {		 
+       var request = objectStore.get(valor);	
+       request.onsuccess = function(event) {
+	     var data = event.target.result;
+	     navigator.clipboard.writeText(data.lat + "," + data.lon);
+       }
+     }	 
 }
 
 // manejar errores

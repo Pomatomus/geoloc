@@ -69,9 +69,26 @@ nav button { /* {  #obtener, #borrabd */
   padding: 10px;
   background-color: #F0E68C;
   margin-top: 15px;
-  font-size: 1.3rem;	
+  font-size: 1.3rem;
+  position: relative; 
 }
 
-.loc input {
-  width: 80%;		
+.loctext {
+  float: left;
+  width: 130px;	
+}
+
+.locdat {
+  float: left;
+  width: 70%;
+}
+	
+.locdat input {
+  width: 70%;		
 }	
+
+.loc::after {
+  content: "";
+  display: block; 
+  clear: both;
+}
