@@ -59,10 +59,10 @@ footer {
 
 nav button { /* {  #obtener, #borrabd */
   height:80px;
-  width:170px;
+  width:130px;
   background-color:rgba(100,50,200,0.1);
-  font-size: 1.5rem;
-  margin-left: 25px;  
+  font-size: 1.4rem;
+  margin-left: 5px;  
 }
 
 .loc {

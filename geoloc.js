@@ -2,18 +2,21 @@
 
 // Globales
 var punto=0;
+var maxpuntos=0;
 const DB_NAME = 'bdloca';
 const DB_VERSION = 1; // Use a long long for this value (don't use a float)
 const DB_STORE_NAME = 'puntos';
 var db;
 var current_view_pub_key;
 var loc = {punto:0, lat:"", lon:"", exact:"", altura:"", alterr:"", fecha:"", coment:""};
+var intervalo;
 
 // Inicio
 function iniciar(){
 	document.getElementById('obtener').addEventListener('click', obtener, false);
 	document.getElementById('borrabd').addEventListener('click', borrarbd, false);
 	document.getElementById('copiar').addEventListener('click', copiaAlPorta, false);
+	document.getElementById('programar').addEventListener('click', programar, false);
 	openDb();
 } 
 
@@ -165,8 +168,9 @@ function pintaloc(){
 function copiaAlPorta() {
 	 var data="";
      var objectStore = db.transaction([DB_STORE_NAME], "readonly").objectStore(DB_STORE_NAME);
-	 var valor = Number(prompt("Copiar Punto?", ""));
-	 if (valor =="0") {		 
+	 var valor = prompt("Copiar Punto?", "");
+	 if (valor != null && valor !="") {		 
+	  if (valor =="0") {		 
        objectStore.openCursor().onsuccess = function(event) {
          var cursor = event.target.result;
          if (cursor) {
@@ -177,12 +181,14 @@ function copiaAlPorta() {
          }
 		 navigator.clipboard.writeText(data);
 	   }
-     } else {		 
+      } else {
+       valor=Number(valor);		  
        var request = objectStore.get(valor);	
        request.onsuccess = function(event) {
 	     var data = event.target.result;
 	     navigator.clipboard.writeText(data.lat + "," + data.lon);
        }
+      }
      }	 
 }
 
@@ -190,6 +196,24 @@ function copiaAlPorta() {
 function errores(error){
   var pie=document.getElementById('pie');	
   pie.innerHTML='Error: '+error.code+' '+error.message;
+}
+
+// programar obterner puntos automaticamente.
+function programar() {
+  var valor = prompt("Intervalo en Minutos?", "");
+  if (valor != null && valor !="") { 
+   valor=valor*60000;  
+   intervalo= window.setInterval(autopunto,valor);	
+  }
+}	
+
+function autopunto() {
+  maxpuntos+=1;
+  if (maxpuntos<10) {
+    obtener()	  
+  } else {	  
+	window.clearInterval(intervalo);  
+  }
 }
 
 window.addEventListener('load', iniciar, false);
