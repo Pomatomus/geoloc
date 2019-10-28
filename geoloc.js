@@ -107,8 +107,8 @@ function obtener(){
   var d = new Date();
   var geoconfig={
 		enableHighAccuracy: true,
-		timeout: 10000,
-		maximumAge: 5000
+		timeout: 90000,
+		maximumAge: 0
   };
 	//navigator.geolocation.getCurrentPosition(mostrar,errores,geoconfig);
   navigator.geolocation.getCurrentPosition(function(position) {
@@ -179,14 +179,24 @@ function copiaAlPorta() {
            data+=cursor.value.lon+"\r";
            cursor.continue();
          }
-		 navigator.clipboard.writeText(data);
+		 try {
+		   navigator.clipboard.writeText(data);
+		 }
+		 catch(err) {
+			errores(err); 
+		 }
 	   }
       } else {
        valor=Number(valor);		  
        var request = objectStore.get(valor);	
        request.onsuccess = function(event) {
 	     var data = event.target.result;
-	     navigator.clipboard.writeText(data.lat + "," + data.lon);
+		 try {
+	       navigator.clipboard.writeText(data.lat + "," + data.lon);
+		 }
+		 catch(err) {
+			errores(err); 
+		 }		 
        }
       }
      }	 
@@ -195,7 +205,7 @@ function copiaAlPorta() {
 // manejar errores
 function errores(error){
   var pie=document.getElementById('pie');	
-  pie.innerHTML='Error: '+error.code+' '+error.message;
+  pie.innerHTML='Error: '+error.code+' / '+error.message;
 }
 
 // programar obterner puntos automaticamente.
