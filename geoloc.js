@@ -135,8 +135,8 @@ function pintaloc(){
 	datos+=' <div class="loctext"> ';
 	datos+='<p> Punto: </p>';
 	datos+='<p> Latitud: </p>';
-	datos+='<p> Latongitud: </p>';
-	datos+='<p> Tolerancia: </p>';
+	datos+='<p> Longitud: </p>';
+	datos+='<p> Radio Error: </p>';
 	datos+='<p> Altura: </p>';
 	datos+='<p> Error Altura: </p>';
 	datos+='<p> Fecha: </p>';
